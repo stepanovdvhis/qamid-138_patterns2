@@ -8,15 +8,16 @@ import static com.codeborne.selenide.Condition.visible;
 public class LoginPage {
     private SelenideElement loginField = $("input[name='login']");
     private SelenideElement passwordField = $("input[name='password']");
-    // Ищем любую кнопку на странице (обычно она одна)
-    private SelenideElement submitButton = $("button");
+    private SelenideElement submitButton = $("button[data-test-id='action-login']");
+    private SelenideElement errorNotification = $("[data-test-id='error-notification']");
 
     public void login(String login, String password) {
-        // Ждем, пока появится кнопка
-        submitButton.shouldBe(visible);
+        loginField.shouldBe(visible).setValue(login);
+        passwordField.shouldBe(visible).setValue(password);
+        submitButton.shouldBe(visible).click();
+    }
 
-        loginField.setValue(login);
-        passwordField.setValue(password);
-        submitButton.click();
+    public void shouldSeeError() {
+        errorNotification.shouldBe(visible);
     }
 }

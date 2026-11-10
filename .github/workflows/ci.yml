@@ -22,13 +22,10 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
-
       - name: Start SUT (Application)
         run: |
           java -jar artifacts/app-ibank.jar -P:profile=test &
-          sleep 15
+          sleep 10
 
       - name: Run Tests
-        run: ./gradlew test -Dselenide.headless=true -Dselenide.browser=chrome
+        run: ./gradlew test -Dselenide.headless=true

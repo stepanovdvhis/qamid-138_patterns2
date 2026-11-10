@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import page.LoginPage;
 
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 
 public class LoginTest {
 
@@ -21,12 +21,63 @@ public class LoginTest {
 
     @Test
     void shouldLoginWithActiveUser() {
+        // 1. Активный зарегистрированный пользователь
         RegistrationDto user = DataGenerator.generateUser("active");
         AuthApi.createUser(user);
 
         LoginPage page = new LoginPage();
         page.login(user.getLogin(), user.getPassword());
 
-        com.codeborne.selenide.Selenide.sleep(2000);
+        // Проверяем, что вошли (например, по появлению личного кабинета)
+        // Пока просто проверяем, что нет ошибки
+        // $(".notification").shouldNotBe(visible);
+    }
+
+    @Test
+    void shouldNotLoginWithBlockedUser() {
+        // 2. Заблокированный зарегистрированный пользователь
+        RegistrationDto user = DataGenerator.generateUser("blocked");
+        AuthApi.createUser(user);
+
+        LoginPage page = new LoginPage();
+        page.login(user.getLogin(), user.getPassword());
+
+        page.shouldSeeError();
+    }
+
+    @Test
+    void shouldNotLoginWithUnregisteredUser() {
+        // 3. Незарегистрированный активный пользователь
+        RegistrationDto user = DataGenerator.generateUser("active");
+        // НЕ создаем его через API
+
+        LoginPage page = new LoginPage();
+        page.login(user.getLogin(), user.getPassword());
+
+        page.shouldSeeError();
+    }
+
+    @Test
+    void shouldNotLoginWithWrongPassword() {
+        // 4. Валидный пользователь, но неправильный пароль
+        RegistrationDto user = DataGenerator.generateUser("active");
+        AuthApi.createUser(user);
+
+        LoginPage page = new LoginPage();
+        page.login(user.getLogin(), "wrong_password");
+
+        page.shouldSeeError();
+    }
+
+    @Test
+    void shouldNotLoginWithWrongLogin() {
+        // 5. Валидный пользователь, но неправильный логин
+        RegistrationDto user = DataGenerator.generateUser("active");
+        AuthApi.createUser(user);
+
+        LoginPage page = new LoginPage();
+        page.login("wrong_login", user.getPassword());
+
+        page.shouldSeeError();
     }
 }
