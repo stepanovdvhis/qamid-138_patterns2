@@ -4,6 +4,8 @@ import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.text;
+import java.time.Duration;
 
 public class LoginPage {
     private SelenideElement loginField = $("input[name='login']");
@@ -12,12 +14,13 @@ public class LoginPage {
     private SelenideElement errorNotification = $("[data-test-id='error-notification']");
 
     public void login(String login, String password) {
-        loginField.shouldBe(visible).setValue(login);
-        passwordField.shouldBe(visible).setValue(password);
-        submitButton.shouldBe(visible).click();
+        loginField.shouldBe(visible, Duration.ofSeconds(10)).setValue(login);
+        passwordField.shouldBe(visible, Duration.ofSeconds(10)).setValue(password);
+        submitButton.shouldBe(visible, Duration.ofSeconds(10)).click();
     }
 
-    public void shouldSeeError() {
-        errorNotification.shouldBe(visible);
+    public void shouldSeeError(String expectedText) {
+        errorNotification.shouldBe(visible, Duration.ofSeconds(10))
+                .shouldHave(text(expectedText));
     }
 }
