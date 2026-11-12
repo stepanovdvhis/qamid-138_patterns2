@@ -6,6 +6,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import page.LoginPage;
 
+import java.time.Duration;
+
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Condition.*;
 
@@ -25,8 +27,8 @@ public class LoginTest {
         LoginPage page = new LoginPage();
         page.login(user.getLogin(), user.getPassword());
 
-        // Проверяем, что вошли (ошибки нет)
-        $("[data-test-id='error-notification']").shouldNotBe(visible);
+        // Проверяем заголовок h2 с текстом "Личный кабинет"
+        $("h2").shouldBe(visible, Duration.ofSeconds(10)).shouldHave(text("Личный кабинет"));
     }
 
     @Test
